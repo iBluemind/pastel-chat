@@ -1,0 +1,126 @@
+@media all and (min-width: 768px) {
+    .section {
+        text-align: center;
+        font-family: 'Nanum Barun Gothic UltraLight', sans-serif;
+    }
+
+    .intro-first {
+        margin-top: 5.4em;
+        margin-bottom: 5.4em;
+        padding-right: 0;
+    }
+
+    .phone-screenshot {
+        width: 50%;
+        vertical-align: bottom;
+        margin-top: 6em;
+    }
+
+    .phone-screenshot-desc-left-cell {
+        display: table-cell;
+        width: 50%;
+        vertical-align: middle;
+    }
+
+    .phone-screenshot-desc-right-cell {
+        display: table-cell;
+        width: 50%;
+        vertical-align: middle;
+    }
+
+    .desc-wrapper {
+        width: 30em;
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .phone-screenshot-desc-left-cell .title {
+        text-align: left;
+        font-size: 2em;
+    }
+
+    .phone-screenshot-desc-right-cell .title {
+        text-align: right;
+        font-size: 2em;
+    }
+
+    .phone-screenshot-desc-left-cell .desc {
+        display: inline-block;
+        text-align: left;
+        font-size: 1.2em;
+    }
+
+    .phone-screenshot-desc-right-cell .desc {
+        display: inline-block;
+        text-align: right;
+        font-size: 1.2em;
+    }
+
+    #intro {
+        width: 40%;
+        margin-top: 6em;
+    }
+
+    #kakao {
+        width: 40%;
+        margin-top: 1.4em;
+    }
+
+    .footer {
+        padding-top: 2em;
+        padding-bottom: 2em;
+        font-size: .2em;
+    }
+
+    .footer-logo {
+        width: 9%;
+    }
+
+    #login-logo {
+        width: 20%;
+    }
+
+    #login {
+        margin: 10em 0; text-align: center;
+    }
+
+    #login > ul {
+        margin-top: 6em;
+        padding: 0;
+        line-height: 2em;
+    }
+
+    #login > ul li {
+        margin-top: .6em;
+    }
+
+    #login > ul li img {
+        width: 20%;
+    }
+
+    #icloud-login-wrapper {
+        margin-top: 4em;
+    }
+
+    #icloud-login-title {
+        margin-bottom: 2.4em;
+        font-size: 1.2em;
+        font-family: 'Nanum Barun Gothic Bold', sans-serif;
+    }
+
+    #icloud-login-form {
+        width: 300px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    #icloud-login-warn {
+        font-size: .8em;
+        margin-top: 2em;
+        text-align: left;
+        width: 30em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

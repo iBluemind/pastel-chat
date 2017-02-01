@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container">
+        <p style="margin: 4em; font-size: 2em;">
+            {{ '%s %s' | format(current_user.last_name, current_user.first_name) }}님, 안녕하세요!
+        </p>
+
+        <div style="text-align: center; font-size: 1em;">
+            카카오톡으로 돌아가셔서 린더에게 말을 걸어주세요!
+        </div>
+
+        <ul style="padding: 0 2em 4em; margin-top: 4em;">
+            <li style="margin-top: 1.4em;">
+                <button class="btn btn-primary btn-lg btn-block">기본 캘린더 설정</button>
+            </li>
+{#            <li style="margin-top: 1.4em;">#}
+{#                <button class="btn btn-primary btn-lg btn-block">관심사 설정</button>#}
+{#            </li>#}
+{#            <li style="margin-top: 1.4em;">#}
+{#                <button class="btn btn-primary btn-lg btn-block">지역 설정</button>#}
+{#            </li>#}
+{#            <li style="margin-top: 1.4em;">#}
+{#                <button class="btn btn-primary btn-lg btn-block">타임존 설정</button>#}
+{#            </li>#}
+{#            <li style="margin-top: 1.4em;">#}
+{#                <button class="btn btn-primary btn-lg btn-block">캘린더 추가 연동</button>#}
+{#            </li>#}
+        </ul>
+    </div>
+
+{% endblock %}
+{% block jscript %}
+    <script>
+        $.ajax({
+             type: "POST",
+             url: "/api/sync/calendar_list",
+             success: function () {
+                 $.ajax({
+                     type: "POST",
+                     url: "/api/sync/primary_calendar",
+                     success: function () {
+
+                     },
+                     error: function(request, status, error) {
+                     }
+                });
+             },
+             error: function(request, status, error) {
+             }
+        });
+    </script>
+{% endblock %}

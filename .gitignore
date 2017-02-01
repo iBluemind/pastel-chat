@@ -1,0 +1,12 @@
+/.idea/workspace.xml
+.DS_Store
+.idea
+*.iml
+/build
+*.pyc
+/venv
+/upload
+/pastel_chat/static/libs
+/pastel_chat/static/gen
+/pastel_chat/static/.webassets-cache/
+/pastel_chat/__pycache__/

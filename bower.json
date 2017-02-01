@@ -1,0 +1,24 @@
+{
+  "name": "pastel-chat",
+  "authors": [
+    "Han Manjong <han@manjong.org>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "static/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.2",
+    "bootstrap": "^3.3.6",
+    "NanumBarunGothic": "https://bitbucket.org/iBluemind/nanumbarungothic.git#master",
+    "Intro": "https://github.com/hiddentrackco/fontintro.git#master",
+    "forge": "^0.6.39"
+  }
+}

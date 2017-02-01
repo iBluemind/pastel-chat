@@ -1,0 +1,125 @@
+@media all and (max-width: 768px) {
+    .icon-bar {
+        background-color: #fff;
+    }
+
+    .section {
+        text-align: center;
+        font-family: 'Nanum Barun Gothic UltraLight', sans-serif;
+        padding-top: 1.4em;
+        padding-bottom: 1.4em;
+    }
+
+    .intro-first {
+        margin-top: 3em;
+        margin-bottom: 3em;
+        padding-right: 0;
+    }
+
+    .phone-screenshot {
+        padding-top: 1em;
+        margin-bottom: -1.4em;
+        padding-left: 1.2em;
+        padding-right: 1.2em;
+        vertical-align: bottom;
+        width: 70%;
+    }
+
+    .phone-screenshot-desc-left-cell {
+        display: table-cell;
+        width: 50%;
+        vertical-align: middle;
+        padding-right: 1.2em;
+    }
+
+    .phone-screenshot-desc-right-cell {
+        display: table-cell;
+        width: 50%;
+        vertical-align: middle;
+        padding-left: 1.2em;
+    }
+
+    .desc-wrapper {
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .phone-screenshot-desc-left-cell .title {
+        text-align: left;
+        font-size: 1em;
+    }
+
+    .phone-screenshot-desc-right-cell .title {
+        text-align: right;
+        font-size: 1em;
+    }
+
+    .phone-screenshot-desc-left-cell .desc {
+        display: inline-block;
+        text-align: left;
+        font-size: .4em;
+    }
+
+    .phone-screenshot-desc-right-cell .desc {
+        display: inline-block;
+        text-align: right;
+        font-size: .4em;
+    }
+
+    #intro {
+        width: 60%;
+        margin-top: 1.4em;
+    }
+
+    #kakao {
+        width: 60%;
+        margin-top: 1.4em;
+    }
+
+    .footer {
+        padding-top: 1.2em;
+        padding-bottom: 1.2em;
+        font-size: .2em;
+    }
+
+    .footer-logo {
+        width: 20%;
+    }
+
+    .footer-content {
+        text-align: center;
+    }
+
+    .footer-content > .pull-left{
+        float: none !important;;
+        text-align: center;
+    }
+
+    .footer-content > .pull-right {
+        float: none !important;
+        text-align: center;
+    }
+
+    #login-logo {
+        width: 60%;
+    }
+
+    #login {
+        margin: 10em 0; text-align: center;
+    }
+
+    #login > ul {
+        margin-top: 6em;
+        padding: 0;
+        line-height: 2em;
+    }
+
+    #login > ul li {
+        margin-top: .6em;
+    }
+
+    #login > ul li img {
+        width: 60%;
+    }
+}

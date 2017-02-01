@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container">
+        <div id="login">
+            <p>
+                <img id="login-logo" src="{{ url_for('static', filename='assets/img/intro.png') }}">
+            </p>
+
+            <div id="icloud-login-wrapper">
+                <p id="icloud-login-title">
+                    iCloud 계정으로 로그인
+                </p>
+
+                <form id="icloud-login-form" action="{{url_for('icloud_login')}}" method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-group">
+                        {{ form.email(placeholder="이메일 주소", class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password(placeholder="비밀번호", class="form-control") }}
+                    </div>
+                    <input type="hidden" name="decryptKey">
+                    <input type="hidden" name="iv">
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">로그인</button>
+                    </div>
+                </form>
+
+                <p class="center" id="icloud-login-warn">
+                    * 린더는 사용자의 iCloud 계정 <b>비밀번호를 저장하지 않습니다.</b>
+                    따라서, 2개월마다 사용자께서 직접 iCloud 계정 비밀번호를 입력하셔서
+                    해당 iCloud 계정 로그인 세션을 유지해주셔야 합니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
