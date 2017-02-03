@@ -14,6 +14,7 @@ from pastel_chat.core.utils import PlaceWordsDatabase, NLPHelper, UserRequestTyp
 from pastel_chat import get_es, get_redis
 from pastel_chat.oauth.provider import GoogleOAuth2Provider
 from pastel_chat.core.messages import formatted_response
+from pastel_chat.utils import slack_notification
 
 
 class ConversationMode(object):
@@ -175,6 +176,7 @@ class NewScheduleResponseMaker(ResponseMaker):
                 'start': start,
                 'end': end
             }
+            self._notify_user_add_calendar(new_event)
             self._add_to_google_calendar(new_event)
         else:
             response = formatted_response['cancel_add_schedule']
@@ -286,6 +288,14 @@ class NewScheduleResponseMaker(ResponseMaker):
         http = credentials.authorize(httplib2.Http())
         service = build('calendar', 'v3', http=http)
         service.events().insert(calendarId='primary', body=new_event).execute()
+
+    def _notify_user_add_calendar(self, new_event):
+        username = self.user.first_name or self.user.username
+        message = '%s님이 일정을 추가했습니다.' % (
+            username
+        )
+        slack_notification('#operation', ':clap:', message,
+                           '유저가일정추가하나안하나지켜보는애')
 
 
 class ResponseGenerator(object):
