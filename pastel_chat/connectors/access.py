@@ -1,6 +1,6 @@
 from config import MYSQL_DATABASE, MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, \
-                   REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_DEFAULT_DB_NUMBER, ELASTIC_SEARCH_PASSWORD, \
-    ELASTIC_SEARCH_USER, ELASTIC_SEARCH_PORT, ELASTIC_SEARCH_HOST, ELASTIC_SEARCH_INDEX
+                   REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_DEFAULT_DB_NUMBER, \
+                   ELASTIC_SEARCH_PORT, ELASTIC_SEARCH_HOST, ELASTIC_SEARCH_INDEX
 
 
 class AccessDAO(object):
@@ -87,12 +87,9 @@ class AccessRedis(object):
 
 
 class AccessElasticSearch(object):
-    def __init__(self, index=None, host=None,
-                       user=None, password=None, port=None):
+    def __init__(self, index=None, host=None, port=None):
         self._index = index
         self._host = host
-        self._user = user
-        self._password = password
         self._port = port
 
     @property
@@ -114,19 +111,7 @@ class AccessElasticSearch(object):
         return self._port
 
     @property
-    def user(self):
-        if getattr(self, '_user', None) is None:
-            self._user = ELASTIC_SEARCH_USER
-        return self._user
-
-    @property
-    def password(self):
-        if getattr(self, '_password', None) is None:
-            self._password = ELASTIC_SEARCH_PASSWORD
-        return self._password
-
-    @property
     def uri(self):
-        return 'http://%s:%s@%s:%s/%s' % (
-            self.user, self.password, self.host, self.port, self.index
+        return 'http://%s:%s/%s' % (
+            self.host, self.port, self.index
         )

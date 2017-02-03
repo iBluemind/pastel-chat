@@ -176,8 +176,8 @@ class NewScheduleResponseMaker(ResponseMaker):
                 'start': start,
                 'end': end
             }
-            self._notify_user_add_calendar(new_event)
             self._add_to_google_calendar(new_event)
+            self._notify_user_add_calendar(new_event)
         else:
             response = formatted_response['cancel_add_schedule']
         return GeneratedResponse(
