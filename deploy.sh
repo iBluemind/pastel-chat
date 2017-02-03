@@ -8,7 +8,7 @@ DOCKER_COMPOSE_PATH=/usr/local/bin/docker-compose
 
 cd $ROOT_DIR/app
 $GIT_PATH pull origin master
+$BOWER_PATH install --allow-root
 
 /bin/chown -R www-data:www-data $ROOT_DIR
-
-DOCKER_COMPOSE_PATH restart
+DOCKER_COMPOSE_PATH up -d

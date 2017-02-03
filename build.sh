@@ -21,11 +21,11 @@ function build_forge_min_js {
 
 cd $ROOT_DIR
 $GIT_PATH pull origin master
+/bin/chown -R www-data:www-data $ROOT_DIR
 
-$BOWER_PATH install
+$BOWER_PATH install --allow-root
 build_forge_min_js
 
 DOCKER_PATH build -t pastel/pastel-chat .
 
-/bin/chown -R www-data:www-data $ROOT_DIR
 DOCKER_COMPOSE_PATH up -d
