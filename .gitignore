@@ -4,6 +4,7 @@
 *.iml
 /build
 *.pyc
+*.sock
 /venv
 /upload
 /pastel_chat/static/libs
