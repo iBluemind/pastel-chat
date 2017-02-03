@@ -2,13 +2,9 @@
 
 BOWER_PATH=/usr/local/bin/bower
 GIT_PATH=/usr/bin/git
-PKILL_PATH=/usr/bin/pkill
 ROOT_DIR=/var/www/pastel_chat
-VENV_PATH=$ROOT_DIR/venv
-UWSGI_PATH=$VENV_PATH/bin/uwsgi
-ACTIVATE_PATH=$VENV_PATH/bin/activate
-PIP_PATH=$VENV_PATH/bin/pip
-
+DOCKER_PATH=/usr/bin/docker
+DOCKER_COMPOSE_PATH=/usr/local/bin/docker-compose
 
 function build_forge_min_js {
     local forge_min_js="$ROOT_DIR/app/pastel_chat/static/libs/forge/js/forge.min.js"
@@ -23,13 +19,13 @@ function build_forge_min_js {
 }
 
 
-cd $ROOT_DIR/app
+cd $ROOT_DIR
 $GIT_PATH pull origin master
 
 $BOWER_PATH install
-$PIP_PATH install -r requirements.txt
 build_forge_min_js
 
+DOCKER_PATH build -t pastel/pastel-chat .
+
 /bin/chown -R www-data:www-data $ROOT_DIR
-
-
+DOCKER_COMPOSE_PATH up -d

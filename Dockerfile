@@ -28,10 +28,10 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
 
 RUN mkdir -p ${PASTEL_CHAT_APP_PATH}
 WORKDIR ${PASTEL_CHAT_APP_PATH}
-
 ADD requirements.txt ${PASTEL_CHAT_APP_PATH}/
 
 VOLUME ${PASTEL_CHAT_APP_PATH}
+
 RUN pip install -r requirements.txt
 RUN pip install uwsgi -I
 
