@@ -26,6 +26,6 @@ $GIT_PATH pull origin master
 $BOWER_PATH install --allow-root
 build_forge_min_js
 
+cd $ROOT_DIR
 $DOCKER_PATH build -t pastel/pastel-chat .
-
 $DOCKER_COMPOSE_PATH up -d
