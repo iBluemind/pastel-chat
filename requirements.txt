@@ -25,7 +25,7 @@ PyMySQL==0.7.6
 elasticsearch==5.1.0
 JPype1==0.6.2
 nltk==3.2.2
-sklearn==0.18.1
+scikit-learn==0.18.1
 korean==0.1.8
 uritemplate==3.0.0
 httplib2==0.9.2

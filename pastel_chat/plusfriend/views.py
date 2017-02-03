@@ -10,7 +10,7 @@ from pastel_chat.core.conversation import log_conversation, \
 from pastel_chat.core.exceptions import AlreadyBegunConversationError
 from pastel_chat.core.messages import BAD_REQUEST, TERMS_DENY, PLEASE_AGREE_TERMS, TERMS_AGREE, PLEASE_ADD_OAUTH
 from pastel_chat.core.response import ConversationMode, ResponseGenerator, RandomResponseMaker
-from pastel_chat.core.utils import serialize_message_additional
+from pastel_chat.core.utils import serialize_message_additional, PositiveOrNegativeDetector
 from pastel_chat.models import MessageType, Message
 from pastel_chat.oauth.models import User, UserStatus
 from pastel_chat.plusfriend import plusfriend
@@ -124,23 +124,23 @@ def receive_user_message():
         response = question_again()
         log_conversations(request_user, user_request, response)
         return response
-    # except:
-    #     sentry.captureException()
-    #     user_request.is_positive = PositiveOrNegativeDetector.detect(user_request.message)
-    #
-    #     random_response_maker = RandomResponseMaker(user_request)
-    #     response = random_response_maker.make_response()
-    #
-    #     if user_request.is_in_conversation:
-    #         log_conversations(request_user, user_request, response)
-    #     else:
-    #         log_messages(request_user, user_request, response)
-    #
-    #     return jsonify({
-    #         "message": {
-    #             "text": response.content
-    #         }
-    #     })
+    except:
+        sentry.captureException()
+        user_request.is_positive = PositiveOrNegativeDetector.detect(user_request.message)
+
+        random_response_maker = RandomResponseMaker(user_request)
+        response = random_response_maker.make_response()
+
+        if user_request.is_in_conversation:
+            log_conversations(request_user, user_request, response)
+        else:
+            log_messages(request_user, user_request, response)
+
+        return jsonify({
+            "message": {
+                "text": response.content
+            }
+        })
 
 
 @plusfriend.route('/friend', methods=['POST'])
