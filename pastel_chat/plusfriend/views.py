@@ -8,7 +8,7 @@ from pastel_chat.core.analyzer import UserRequestAnalyzer
 from pastel_chat.core.conversation import log_conversation, \
     end_conversation, get_last_message_in_conversation
 from pastel_chat.core.exceptions import AlreadyBegunConversationError
-from pastel_chat.core.messages import BAD_REQUEST, TERMS_DENY, PLEASE_AGREE_TERMS, TERMS_AGREE, PLEASE_ADD_OAUTH
+from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH, CONFIRM_SET_USERNAME
 from pastel_chat.core.response import ConversationMode, ResponseGenerator, RandomResponseMaker
 from pastel_chat.core.utils import serialize_message_additional, PositiveOrNegativeDetector
 from pastel_chat.models import MessageType, Message
@@ -31,26 +31,23 @@ def receive_user_message():
             }
         })
 
-    if request_message == TERMS_DENY:
-        return jsonify({
-            "message":{
-                "text": PLEASE_AGREE_TERMS
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": [TERMS_AGREE, TERMS_DENY]
-            }
-        })
-
     request_user = get_or_create(
         db.session,
         User,
         messenger_uid=messenger_uid
     )
 
+    if request_user.username is None:
+        request_user.username = request_message
+        db.session.commit()
+        return jsonify({
+            'message': {
+                'text': CONFIRM_SET_USERNAME % request_message
+            }
+        })
+
     user_platform_sessions = request_user.platform_sessions
-    if request_message == TERMS_AGREE or \
-                    len(user_platform_sessions) == 0:
+    if len(user_platform_sessions) == 0:
         return jsonify({
             "message":{
                 "text": PLEASE_ADD_OAUTH % (request_user.uuid)
@@ -170,7 +167,6 @@ def removed_from_friend(user_key):
 def initial_keyboard():
     return jsonify(
         {
-            "type": "buttons",
-            "buttons": [TERMS_AGREE, TERMS_DENY]
+            "type": "text"
         }
     )

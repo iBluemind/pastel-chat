@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Pre-defined Requests
-TERMS_AGREE = '동의해요'
-TERMS_DENY = '동의하지 않아요'
-PLEASE_AGREE_TERMS = '개인정보취급방침과 린더 서비스 이용약관에 동의해주셔야 계속해서 사용하실 수 있습니다!'
+CONFIRM_SET_USERNAME = '네, 앞으로 입력하신 이름으로 불러드리겠습니다. %님.'
 PLEASE_ADD_OAUTH = '린더를 선택해주셔서 감사합니다! 아래 URL 주소에 접속하셔서 캘린더 연동을 해주세요.\n\nhttp://linder.kr/users/%s'
 BAD_REQUEST = '린더는 일정 관련 일만을 처리하는 인공지능 캘린더로 해당 기능을 지원하지 않습니다.'
 
@@ -23,9 +21,7 @@ class FormattedText(object):
 
 
 formatted_request = {
-    'terms_agree': FormattedText(1, TERMS_AGREE),
-    'terms_deny': FormattedText(2, TERMS_DENY),
-    'please_agree_terms': FormattedText(3, PLEASE_AGREE_TERMS),
+    'confirm_set_username': FormattedText(9, CONFIRM_SET_USERNAME),
     'please_add_oauth': FormattedText(4, PLEASE_ADD_OAUTH),
     'bad_request': FormattedText(5, BAD_REQUEST)
 }
