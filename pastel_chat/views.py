@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-import httplib2
+import datetime, httplib2
 from dateutil.relativedelta import relativedelta
-from flask import make_response, redirect, render_template, request, url_for, json
+from flask import make_response, redirect, render_template, request, url_for, json, \
+    session
 from flask_login import current_user, login_required, login_user, logout_user
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2Credentials
@@ -16,13 +16,14 @@ from pastel_chat.models import CalendarPlatformSync, Schedule, DateTimeWithTimeZ
     CalendarPlatformSyncHistory, PlatformSyncBy, CalendarListPlatformSync, Calendar
 from pastel_chat.oauth.models import User
 from pastel_chat.oauth.provider import GoogleOAuth2Provider
-from pastel_chat.utils import get_or_create
+from pastel_chat.utils import get_or_create, KAKAOTALK_USER_AGENT
 
 
 @app.route('/login', methods=['GET'])
+@login_required
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    session['messenger'] = current_user.messenger
+    session['messenger_uid'] = current_user.messenger_uid
     return render_template('login.html')
 
 
@@ -304,10 +305,16 @@ def primary_calendar_sync():
 
 
 @app.route('/users/<uuid>', methods=['GET'])
-def redirected_settings(uuid):
+def redirect_settings(uuid):
+    # 카카오톡 브라우저로 접속하지 않은 경우 차단
+    from flask import session, request
+    if KAKAOTALK_USER_AGENT not in request.headers['User-Agent']:
+        return render_template('error.html', title='카카오톡에서 사용해주세요!',
+                               description='카카오톡 옐로아이디 친구와의 대화에서만 접속할 수 있어요.')
     user = User.query.filter(User.uuid==uuid).first()
-    if user is not None:
+    if user:
         login_user(user)
+        return redirect(url_for('settings'))
     return redirect(url_for('index'))
 
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import request, redirect, url_for
+from flask import request
+from flask_login import login_required
 from sqlalchemy.exc import IntegrityError
 from pastel_chat import db
 from pastel_chat.oauth.models import User
@@ -10,6 +11,7 @@ from pastel_chat.utils import store_current_user
 
 
 @oauth.route('/<platform_name>/authorize', methods=['GET'])
+@login_required
 def request_oauth(platform_name):
     try:
         messenger, messenger_uid = store_current_user()
@@ -20,8 +22,6 @@ def request_oauth(platform_name):
         db.session.rollback()
         if e.orig.args[0] == 1062:      # 이미 가입이 되어 있는 경우
             pass
-    except:
-        return redirect(url_for('index'))
     platform_id = platform_name2id(platform_name)
     manager = PlatformOAuth2Manager(platform_id)
     return manager.process('step1')

@@ -151,7 +151,10 @@ def registered_as_friend():
     joined_user = User.query.filter(User.messenger_uid==user_key).first()
     if joined_user:
         joined_user.status = UserStatus.NORMAL
-        db.session.commit()
+    else:
+        new_user = User(messenger_uid=user_key)  # 새로운 회원 가입
+        db.session.add(new_user)
+    db.session.commit()
     return response_template('정상처리되었습니다.')
 
 

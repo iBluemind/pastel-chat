@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from flask import render_template
 from flask_login import UserMixin
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
@@ -136,11 +137,11 @@ class User(db.Model, UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    login_user = db.session.query(User).filter(User.email == user_id).first()
+    login_user = db.session.query(User).filter(User.messenger_uid==user_id).first()
     return login_user
 
 
 @login_manager.unauthorized_handler
 def unauthorized_login():
-    from flask import redirect, url_for
-    return redirect(url_for('login'))
+    return render_template('error.html', title='카카오톡에서 사용해주세요!',
+                           description='카카오톡 옐로아이디 친구 추가 후 접속해주세요.')
