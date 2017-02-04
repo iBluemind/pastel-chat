@@ -148,7 +148,7 @@ def registered_as_friend():
     body = request.get_json()
     user_key = body['user_key']
 
-    joined_user = User.query.filter(messenger_uid=user_key).first()
+    joined_user = User.query.filter(User.messenger_uid==user_key).first()
     if joined_user:
         joined_user.status = UserStatus.NORMAL
         db.session.commit()
@@ -157,7 +157,7 @@ def registered_as_friend():
 
 @plusfriend.route('/friend/<user_key>', methods=['DELETE'])
 def removed_from_friend(user_key):
-    joined_user = User.query.filter(messenger_uid=user_key).first()
+    joined_user = User.query.filter(User.messenger_uid==user_key).first()
     joined_user.status = UserStatus.DEACTIVATED
     db.session.commit()
     return response_template('정상처리되었습니다.')
