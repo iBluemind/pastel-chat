@@ -240,5 +240,4 @@ class PlatformOAuth2Manager(object):
                         ).first()
                     old_user_platform_session.tokens = user_platform_session['tokens']
                     db.session.commit()
-            login_user(user)
-        return redirect(url_for('index'))
+        return redirect(url_for('settings'))

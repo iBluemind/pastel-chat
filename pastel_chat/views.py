@@ -84,6 +84,9 @@ def about():
 @app.route('/settings', methods=['GET'])
 @login_required
 def settings():
+    user_platform_sessions = current_user.platform_sessions
+    if len(user_platform_sessions) == 0:
+        return redirect(url_for('login'))
     return render_template('settings.html')
 
 
@@ -306,11 +309,6 @@ def primary_calendar_sync():
 
 @app.route('/users/<uuid>', methods=['GET'])
 def redirect_settings(uuid):
-    # 카카오톡 브라우저로 접속하지 않은 경우 차단
-    from flask import session, request
-    if KAKAOTALK_USER_AGENT not in request.headers['User-Agent']:
-        return render_template('error.html', title='카카오톡에서 사용해주세요!',
-                               description='카카오톡 옐로아이디 친구와의 대화에서만 접속할 수 있어요.')
     user = User.query.filter(User.uuid==uuid).first()
     if user:
         login_user(user)
