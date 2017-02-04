@@ -2,7 +2,6 @@ FROM ubuntu:16.04
 
 MAINTAINER han@manjong.org
 
-ENV PYTHONUNBUFFERED 1
 ENV PASTEL_CHAT_APP_PATH /var/www/pastel_chat
 
 RUN apt-get update \

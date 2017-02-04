@@ -6,11 +6,13 @@ ROOT_DIR=/var/www/pastel_chat
 DOCKER_PATH=/usr/bin/docker
 DOCKER_COMPOSE_PATH=/usr/local/bin/docker-compose
 
+sudo chown -R ${USER}:${USER} $ROOT_DIR
+
 cd $ROOT_DIR
 $GIT_PATH pull origin master
 $BOWER_PATH install --allow-root
 
-/bin/chown -R www-data:www-data $ROOT_DIR
+sudo /bin/chown -R www-data:www-data $ROOT_DIR
 $DOCKER_COMPOSE_PATH up -d
 
 curl -X POST --data-urlencode \
