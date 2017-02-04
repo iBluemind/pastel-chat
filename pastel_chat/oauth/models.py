@@ -124,7 +124,7 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password, password)
 
     def get_id(self):
-        return self.email or self.messenger_uid
+        return self.messenger_uid
 
     @property
     def is_active(self):
