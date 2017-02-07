@@ -31,6 +31,14 @@ class UserRequest(object):
     def request_type(self, request_type):
         self._request_type = request_type
 
+    @property
+    def last_conversation_message(self):
+        return self._last_conversation_message
+
+    @last_conversation_message.setter
+    def last_conversation_message(self, last_conversation_message):
+        self._last_conversation_message = last_conversation_message
+
 
 class UserRequestAnalyzer(object):
 
@@ -51,18 +59,17 @@ class UserRequestAnalyzer(object):
 
     def analyze(self):
         self.user_request = user_request = UserRequest(self.message, self.user)
+        command_type = self._extract_command_type()
+        if command_type:
+            user_request.request_type = UserRequestType.COMMAND
+            user_request.command_type = command_type
+        else:
+            user_request.request_type = UserRequestType.UNKNOWN
+            user_request.is_positive = PositiveOrNegativeDetector.detect(self.message)
+
         if self.is_in_conversation:
             user_request.is_in_conversation = True
-            user_request.request_type = UserRequestType.COMMAND
-            user_request.command_type = self._get_last_message_in_conversation()['command_type']
-        else:
-            command_type = self._extract_command_type()
-            if command_type:
-                user_request.request_type = UserRequestType.COMMAND
-                user_request.command_type = command_type
-            else:
-                user_request.request_type = UserRequestType.UNKNOWN
-                user_request.is_positive = PositiveOrNegativeDetector.detect(self.message)
+            user_request.last_conversation_message = self._get_last_message_in_conversation()
         return user_request
 
     @property
@@ -83,7 +90,6 @@ class UserRequestAnalyzer(object):
 
     def _extract_command_type(self):
         extracted_verb_phrases = self._extract_verb_phrases()
-
         for verb_keywords, command_type in self.command_types.items():
             for verb_keyword in verb_keywords:
                 for pre_defined_verb_phrases in extracted_verb_phrases:

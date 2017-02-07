@@ -84,9 +84,6 @@ class RandomResponseMaker(ResponseMaker):
 
 
 class NewScheduleResponseMaker(ResponseMaker):
-
-    __command_type__ = CommandType.ADD_NEW_SCHEDULE
-
     def __init__(self, user_request):
         super().__init__(user_request)
         self.place_searcher = PlaceWordsDatabase(get_es())
@@ -110,86 +107,6 @@ class NewScheduleResponseMaker(ResponseMaker):
                 '''
         self.helper = NLPHelper(message,
                                 tagger_selector='mecab', grammer=grammer)
-
-    def make_response(self):
-        if self.user_request.is_in_conversation:
-            return self._answer()
-        else:
-            return self._question()
-
-    def _question(self):
-        self.create_nlp_helper(self.user_request.message)
-        extracted_datetime, extracted_places, extracted_title = self.extract()
-        response = formatted_response['check_new_schedule']
-        username = self.user.first_name or self.user.username
-        return GeneratedResponse(
-            ConversationMode.BEGIN,
-            str(response) % (
-                username,
-                ' '.join(extracted_title) if len(extracted_title) > 0 else '<인식불가>',
-                extracted_datetime.strftime('%Y년 %m월 %d일 %H시 %M분'),
-                ' '.join(extracted_places) if len(extracted_places) > 0 else '<인식불가>',
-            ),
-            formatted_text_id=response.id
-        )
-
-    def _answer(self):
-        if PositiveOrNegativeDetector.detect(self.user_request.message):
-            if self.user.signup_step_status == UserSignupStep.AFTER_READ_INTRODUCE:
-                response = formatted_response['welcome_first_add_schedule']
-                self.user.signup_step_status = UserSignupStep.AFTER_ADD_FIRST_SCHEDULE
-            else:
-                response = formatted_response['confirm_add_schedule']
-
-            def get_first_message_in_conversation():
-                conversation_redis = get_redis(RedisType.CONVERSATIONS)
-                uid = self.user.uid
-                message = conversation_redis.lindex(generate_conversation_id(uid), 0)
-                return json.loads(message.decode())['content']
-
-            first_message = get_first_message_in_conversation()
-            self.create_nlp_helper(first_message)
-            extracted_datetime, extracted_places, extracted_title = self.extract()
-
-            def datetime_format(extracted):
-                korean_utctime = '+09:00'
-                formatted = extracted.strftime('%Y-%m-%dT%H:%M:%S')
-                return {
-                    'dateTime': '%s%s' % (formatted, korean_utctime),
-                    'timeZone': 'Asia/Seoul',
-                }
-
-            def date_format(extracted):
-                formatted = extracted.strftime('%Y-%m-%d')
-                return {
-                    'date': '%s' % formatted,
-                    'timeZone': 'Asia/Seoul',
-                }
-
-            if extracted_datetime.strftime('%H:%M:%S') == '12:00:00':
-                start = date_format(extracted_datetime)
-                end = date_format(extracted_datetime)
-            else:
-                start = datetime_format(extracted_datetime)
-                after_one_hour = extracted_datetime + timedelta(hours=1)
-                end = datetime_format(after_one_hour)
-
-            new_event = {
-                'summary': extracted_title,
-                'location': extracted_places,
-                'description': first_message,
-                'start': start,
-                'end': end
-            }
-            self._add_to_google_calendar(new_event)
-            self._notify_user_add_calendar(new_event)
-        else:
-            response = formatted_response['cancel_add_schedule']
-        return GeneratedResponse(
-            ConversationMode.END,
-            str(response),
-            formatted_text_id=response.id
-        )
 
     def _extract_datetime(self):
         def convert(converted_date):
@@ -285,6 +202,93 @@ class NewScheduleResponseMaker(ResponseMaker):
         extracted_title = self._extract_title()
         return extracted_datetime, extracted_places, extracted_title
 
+
+class NewScheduleQuestionResponseMaker(NewScheduleResponseMaker):
+
+    __command_type__ = CommandType.ADD_NEW_SCHEDULE
+
+    def make_response(self):
+        return self._answer()
+
+    def _question(self):
+        self.create_nlp_helper(self.user_request.message)
+        extracted_datetime, extracted_places, extracted_title = self.extract()
+        response = formatted_response['check_new_schedule']
+        username = self.user.first_name or self.user.username
+        return GeneratedResponse(
+            ConversationMode.BEGIN,
+            str(response) % (
+                username,
+                ' '.join(extracted_title) if len(extracted_title) > 0 else '<인식불가>',
+                extracted_datetime.strftime('%Y년 %m월 %d일 %H시 %M분'),
+                ' '.join(extracted_places) if len(extracted_places) > 0 else '<인식불가>',
+            ),
+            formatted_text_id=response.id
+        )
+
+
+class NewScheduleAnswerResponseMaker(NewScheduleResponseMaker):
+    def make_response(self):
+        return self._question()
+
+    def _answer(self):
+        if PositiveOrNegativeDetector.detect(self.user_request.message):
+            if self.user.signup_step_status == UserSignupStep.AFTER_READ_INTRODUCE:
+                response = formatted_response['welcome_first_add_schedule']
+                self.user.signup_step_status = UserSignupStep.AFTER_ADD_FIRST_SCHEDULE
+            else:
+                response = formatted_response['confirm_add_schedule']
+
+            def get_first_message_in_conversation():
+                conversation_redis = get_redis(RedisType.CONVERSATIONS)
+                uid = self.user.uid
+                message = conversation_redis.lindex(generate_conversation_id(uid), 0)
+                return json.loads(message.decode())['content']
+
+            first_message = get_first_message_in_conversation()
+            self.create_nlp_helper(first_message)
+            extracted_datetime, extracted_places, extracted_title = self.extract()
+
+            def datetime_format(extracted):
+                korean_utctime = '+09:00'
+                formatted = extracted.strftime('%Y-%m-%dT%H:%M:%S')
+                return {
+                    'dateTime': '%s%s' % (formatted, korean_utctime),
+                    'timeZone': 'Asia/Seoul',
+                }
+
+            def date_format(extracted):
+                formatted = extracted.strftime('%Y-%m-%d')
+                return {
+                    'date': '%s' % formatted,
+                    'timeZone': 'Asia/Seoul',
+                }
+
+            if extracted_datetime.strftime('%H:%M:%S') == '12:00:00':
+                start = date_format(extracted_datetime)
+                end = date_format(extracted_datetime)
+            else:
+                start = datetime_format(extracted_datetime)
+                after_one_hour = extracted_datetime + timedelta(hours=1)
+                end = datetime_format(after_one_hour)
+
+            new_event = {
+                'summary': extracted_title,
+                'location': extracted_places,
+                'description': first_message,
+                'start': start,
+                'end': end
+            }
+            self._add_to_google_calendar(new_event)
+            self._notify_user_add_calendar(new_event)
+        else:
+            response = formatted_response['cancel_add_schedule']
+        return GeneratedResponse(
+            ConversationMode.END,
+            str(response),
+            formatted_text_id=response.id
+        )
+
     def _add_to_google_calendar(self, new_event):
         credential = list(filter(lambda x: x.platform_id ==
                               GoogleOAuth2Provider.__platform_id__,
@@ -299,23 +303,34 @@ class NewScheduleResponseMaker(ResponseMaker):
         message = '%s님이 일정을 추가했습니다.' % (
             username
         )
-        slack_notification('#operation', ':clap:', message,
+        slack_notification('#yellowbot', ':clap:', message,
                            '유저가일정추가하나안하나지켜보는애')
 
 
 class ResponseGenerator(object):
 
     command_type_response_makers = {
-        CommandType.ADD_NEW_SCHEDULE: NewScheduleResponseMaker
+        CommandType.ADD_NEW_SCHEDULE: NewScheduleQuestionResponseMaker
+    }
+
+    answer_type_response_makers = {
+        NewScheduleQuestionResponseMaker: NewScheduleAnswerResponseMaker
     }
 
     def __init__(self, user_request):
         self.user_request = user_request
 
     def make_response(self):
+        response_maker = self._get_maker()
+        return response_maker.make_response()
+
+    def _get_maker(self):
         if self.user_request.request_type == UserRequestType.COMMAND:
             maker_cls = self.command_type_response_makers[self.user_request.command_type]
-            maker = maker_cls(self.user_request)
-        else:
-            maker = RandomResponseMaker(self.user_request)
-        return maker.make_response()
+            return maker_cls(self.user_request)
+        if self.user_request.is_in_conversation == True:
+            conversation_command_type = self.user_request.last_conversation_message['command_type']
+            question_maker_cls = self.command_type_response_makers[conversation_command_type]
+            answer_maker_cls = self.answer_type_response_makers[question_maker_cls]
+            return answer_maker_cls(self.user_request)
+        return RandomResponseMaker(self.user_request)
