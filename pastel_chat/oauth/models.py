@@ -67,6 +67,13 @@ class Messenger(object):
     LINE = 2                    # 라인
 
 
+class UserSignupStep(object):
+    COMPLETE_ADD_FIRST_OAUTH = 1
+    BEFORE_READ_INTRODUCE = 2
+    AFTER_READ_INTRODUCE = 3
+    AFTER_ADD_FIRST_SCHEDULE = 4
+
+
 class User(db.Model, UserMixin):
 
     __tablename__ = 'user'
@@ -93,13 +100,16 @@ class User(db.Model, UserMixin):
     primary_calendar_id = db.Column(db.Integer, db.ForeignKey('calendar.id'), nullable=True)
     primary_calendar = relationship('Calendar', backref=backref('primary_user', uselist=False),
                                             primaryjoin=primary_calendar_id==Calendar.id)
-    platform_sessions = db.relationship('PlatformSession', backref='user')
+    platform_sessions = db.relationship('PlatformSession', backref='user', lazy='subquery')
+    invitation_code_id = db.Column(db.Integer, db.ForeignKey('invitation_code.id'), nullable=True)
+    signup_step_status = db.Column(db.SmallInteger, default=0)
 
     def __init__(self, username=None, first_name=None, last_name=None,
                  email=None, status=UserStatus.NORMAL, privilege=UserPrivilege.NORMAL,
                  age=None, gender=None, messenger=Messenger.KAKAOTALK,
                  messenger_uid=None, region_id=None,
-                 timezone='Asia/Seoul', primary_calendar_id=None):
+                 timezone='Asia/Seoul', primary_calendar_id=None,
+                 invitation_code=None, signup_step_status=None):
         self.uuid = random_generate_token()
         self.username = username
         self.first_name = first_name
@@ -114,6 +124,8 @@ class User(db.Model, UserMixin):
         self.region_id = region_id
         self.timezone = timezone
         self.primary_calendar_id = primary_calendar_id
+        self.invitation_code = invitation_code
+        self.signup_step_status = signup_step_status
         self.created_at = datetime.datetime.now()
 
     @staticmethod

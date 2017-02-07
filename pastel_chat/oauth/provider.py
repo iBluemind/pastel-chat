@@ -12,7 +12,7 @@ from oauth2client.client import OAuth2WebServerFlow, OAuth2Credentials
 from sqlalchemy.exc import IntegrityError
 from config import NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 from pastel_chat import db
-from pastel_chat.oauth.models import User, Platform, PlatformSession
+from pastel_chat.oauth.models import User, Platform, PlatformSession, UserSignupStep
 from pastel_chat.utils import random_generate_token
 
 
@@ -225,6 +225,9 @@ class PlatformOAuth2Manager(object):
             for k, v in new_userinfo.items():
                 if v is not None:
                     setattr(user, k, v)
+            if user.signup_step_status is None or \
+                            user.signup_step_status < UserSignupStep.COMPLETE_ADD_FIRST_OAUTH:
+                user.signup_step_status = UserSignupStep.COMPLETE_ADD_FIRST_OAUTH
             new_user_platform_session = PlatformSession(**user_platform_session)
             db.session.add(new_user_platform_session)
 

@@ -7,7 +7,7 @@ def initialize_db():
     from pastel_chat.models import Calendar, CalendarPlatformSync, PlatformSyncBy, \
                 Schedule, ScheduleRecurrence, AttachedFile, Region, HashTag, \
                 user_hashtag, schedule_schedule_recurrence, calendar_schedule, \
-                CalendarListPlatformSync, Message, Conversation
+                CalendarListPlatformSync, Message, Conversation, InvitationCode
     db.drop_all()
     db.create_all()
 
@@ -16,13 +16,17 @@ def initialize_db():
         client_id=GOOGLE_CLIENT_ID,
         client_secret=GOOGLE_CLIENT_SECRET
     )
+    db.session.add(platform_google)
     platform_naver = Platform(
         name='naver',
         client_id=NAVER_CLIENT_ID,
         client_secret=NAVER_CLIENT_SECRET
     )
-    db.session.add(platform_google)
     db.session.add(platform_naver)
+    first_closed_beta_invitation_code = InvitationCode(
+        '첫번째 클로즈드 베타 테스트'
+    )
+    db.session.add(first_closed_beta_invitation_code)
     db.session.commit()
 
 

@@ -12,6 +12,7 @@ from pastel_chat.core.conversation import generate_conversation_id
 from pastel_chat.core.utils import PlaceWordsDatabase, NLPHelper, UserRequestType, \
     CommandType, PositiveOrNegativeDetector
 from pastel_chat import get_es, get_redis
+from pastel_chat.oauth.models import UserSignupStep
 from pastel_chat.oauth.provider import GoogleOAuth2Provider
 from pastel_chat.core.messages import formatted_response
 from pastel_chat.utils import slack_notification
@@ -134,7 +135,11 @@ class NewScheduleResponseMaker(ResponseMaker):
 
     def _answer(self):
         if PositiveOrNegativeDetector.detect(self.user_request.message):
-            response = formatted_response['confirm_add_schedule']
+            if self.user.signup_step_status == UserSignupStep.AFTER_READ_INTRODUCE:
+                response = formatted_response['welcome_first_add_schedule']
+                self.user.signup_step_status = UserSignupStep.AFTER_ADD_FIRST_SCHEDULE
+            else:
+                response = formatted_response['confirm_add_schedule']
 
             def get_first_message_in_conversation():
                 conversation_redis = get_redis(RedisType.CONVERSATIONS)

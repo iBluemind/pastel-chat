@@ -28,6 +28,25 @@ calendar_schedule = db.Table(
                     )
 
 
+class InvitationCode(db.Model):
+
+    __tablename__ = 'invitation_code'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    code = db.Column(db.String(6), unique=True)
+    description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime, onupdate=func.current_timestamp())
+
+    def __init__(self, description):
+        self.code = self._generate_code()
+        self.description = description
+        self.created_at = datetime.datetime.now()
+
+    def _generate_code(self):
+        return random_generate_token(6)
+
+
 class Conversation(db.Model):
 
     __tablename__ = 'conversation'

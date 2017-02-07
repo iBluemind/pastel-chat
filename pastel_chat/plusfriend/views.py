@@ -8,11 +8,12 @@ from pastel_chat.core.analyzer import UserRequestAnalyzer
 from pastel_chat.core.conversation import log_conversation, \
     end_conversation, get_last_message_in_conversation
 from pastel_chat.core.exceptions import AlreadyBegunConversationError
-from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH, CONFIRM_SET_USERNAME
+from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH, PLEASE_INPUT_INVITATION_CODE, HELP_LINDER, README, \
+    NOT_YET_ADD_OAUTH, COMPLETE_ADD_OAUTH, INTRODUCE_LINDER, COMPLETE_SIGNUP
 from pastel_chat.core.response import ConversationMode, ResponseGenerator, RandomResponseMaker
 from pastel_chat.core.utils import serialize_message_additional, PositiveOrNegativeDetector
-from pastel_chat.models import MessageType, Message
-from pastel_chat.oauth.models import User, UserStatus
+from pastel_chat.models import MessageType, Message, InvitationCode
+from pastel_chat.oauth.models import User, UserStatus, UserSignupStep
 from pastel_chat.plusfriend import plusfriend
 from pastel_chat.utils import get_or_create
 
@@ -37,20 +38,59 @@ def receive_user_message():
         messenger_uid=messenger_uid
     )
 
-    if request_user.username is None:
-        request_user.username = request_message
-        db.session.commit()
+    if request_user.signup_step_status is None or \
+                    request_user.signup_step_status < UserSignupStep.AFTER_READ_INTRODUCE:
+        if request_user.invitation_code_id is None:
+            input_code = InvitationCode.query.filter(InvitationCode.code==request_message).first()
+            if input_code:
+                request_user.invitation_code_id = input_code.id
+                db.session.commit()
+                return jsonify({
+                    'message': {
+                        'text': PLEASE_ADD_OAUTH % (request_user.uuid)
+                    }
+                })
+            return jsonify({
+                'message' : {
+                    'text': PLEASE_INPUT_INVITATION_CODE
+                }
+            })
+        if len(request_user.platform_sessions) == 0:
+            return jsonify({
+                "message": {
+                    "text": NOT_YET_ADD_OAUTH
+                }
+            })
+
+        if request_user.signup_step_status == UserSignupStep.COMPLETE_ADD_FIRST_OAUTH:
+            request_user.signup_step_status = UserSignupStep.BEFORE_READ_INTRODUCE
+            db.session.commit()
+            return jsonify({
+                'message': {
+                    'text': COMPLETE_ADD_OAUTH
+                }
+            })
+
+        if request_user.signup_step_status == UserSignupStep.BEFORE_READ_INTRODUCE:
+            request_user.signup_step_status = UserSignupStep.AFTER_READ_INTRODUCE
+            db.session.commit()
+            is_positive = PositiveOrNegativeDetector.detect(request_message)
+            if is_positive:
+                return jsonify({
+                    'message': {
+                        'text': INTRODUCE_LINDER
+                    }
+                })
+            return jsonify({
+                'message': {
+                    'text': COMPLETE_SIGNUP
+                }
+            })
+
+    if request_message == HELP_LINDER:
         return jsonify({
             'message': {
-                'text': CONFIRM_SET_USERNAME % request_message
-            }
-        })
-
-    user_platform_sessions = request_user.platform_sessions
-    if len(user_platform_sessions) == 0:
-        return jsonify({
-            "message":{
-                "text": PLEASE_ADD_OAUTH % (request_user.uuid)
+                'text': README
             }
         })
 
