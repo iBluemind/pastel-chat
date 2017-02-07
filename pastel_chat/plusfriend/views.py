@@ -90,7 +90,7 @@ def receive_user_message():
     if request_message == HELP_LINDER:
         return jsonify({
             'message': {
-                'text': README
+                'text': README % request_user.uuid
             }
         })
 
