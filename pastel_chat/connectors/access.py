@@ -87,16 +87,9 @@ class AccessRedis(object):
 
 
 class AccessElasticSearch(object):
-    def __init__(self, index=None, host=None, port=None):
-        self._index = index
+    def __init__(self, host=None, port=None):
         self._host = host
         self._port = port
-
-    @property
-    def index(self):
-        if getattr(self, '_index', None) is None:
-            self._index = ELASTIC_SEARCH_INDEX
-        return self._index
 
     @property
     def host(self):
@@ -112,6 +105,6 @@ class AccessElasticSearch(object):
 
     @property
     def uri(self):
-        return 'http://%s:%s/%s' % (
-            self.host, self.port, self.index
+        return 'http://%s:%s' % (
+            self.host, self.port
         )

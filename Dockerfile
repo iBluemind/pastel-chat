@@ -13,8 +13,7 @@ RUN apt-get update \
     # for uWSGI
     libpcre3 libpcre3-dev \
     # for Mecab-ko-dic
-    automake autoconf \
-    && apt-get autoremove -y && apt-get clean
+    automake autoconf
 
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
 
@@ -61,5 +60,7 @@ VOLUME ${PASTEL_CHAT_APP_PATH}
 
 RUN pip install -r requirements.txt
 RUN pip install uwsgi -I
+
+RUN apt-get autoremove -y && apt-get clean
 
 ENTRYPOINT bash

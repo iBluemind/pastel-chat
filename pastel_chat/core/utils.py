@@ -37,13 +37,15 @@ class PlaceWordsDatabase(object):
 
     def search(self, place_name):
         res = self.connector.search(index='pastel_chat',
+                                    doc_type='places',
                                     body={'query':
-                                        {'term':
+                                        {'match':
                                             {
                                                'name': place_name
                                             }
                                         }
                                     })
+
         results = []
         total = res['hits']['total']
         if total > 0:
