@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
+    <div class="overlay"></div>
+    <div class="overlay-loading">
+        <img src="{{ url_for('static', filename='assets/img/loading.gif') }}">
+    </div>
+
     <div class="container">
         <p style="margin: 4em; font-size: 2em;">
             {{ '%s %s' | format(current_user.last_name, current_user.first_name) }}님, 안녕하세요!
@@ -12,7 +17,10 @@
 
         <ul style="padding: 0 2em 4em; margin-top: 4em;">
             <li style="margin-top: 1.4em;">
-                <button class="btn btn-primary btn-lg btn-block">기본 캘린더 설정</button>
+                <div class="dropdown">
+                <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">기본 캘린더 변경 <span class="caret"></span></button>
+                    <ul id="calendars" class="dropdown-menu"></ul>
+                </div>
             </li>
 {#            <li style="margin-top: 1.4em;">#}
 {#                <button class="btn btn-primary btn-lg btn-block">관심사 설정</button>#}
@@ -32,11 +40,15 @@
 {% endblock %}
 {% block jscript %}
     <script>
+        $(".overlay, .overlay-loading").show();
         $.ajax({
              type: "POST",
              url: "/api/sync/calendar_list",
              success: function () {
-                 $.ajax({
+                fetchCalendars();
+                $(".overlay, .overlay-loading").hide();
+
+                $.ajax({
                      type: "POST",
                      url: "/api/sync/primary_calendar",
                      success: function () {
@@ -47,7 +59,48 @@
                 });
              },
              error: function(request, status, error) {
+                $(".overlay, .overlay-loading").hide();
              }
         });
+
+        function fetchCalendars() {
+            $.ajax({
+                type: "GET",
+                url: "/api/calendars",
+                success: function (data) {
+                    $("#calendars").empty();
+                    var calendars = data.data.calendars;
+                    for (index in calendars) {
+                        var calendar = calendars[index];
+                        var newCalendar = null;
+                        if (calendar.is_primary) {
+                            newCalendar = $('<li data-id="' + calendar.id + '"><a>' + calendar.name + '  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>' + "</a></li>");
+                        } else {
+                            newCalendar = $('<li data-id="' + calendar.id + '"><a>' + calendar.name + "</a></li>");
+                        }
+                        if (newCalendar) {
+                            newCalendar.click(function() {
+                                changePrimaryCalendar($(this));
+                            });
+                            $("#calendars").append(newCalendar);
+                        }
+                    }
+                },
+                error: function(request, status, error) {
+                }
+            });
+        }
+
+        function changePrimaryCalendar(calendarDom) {
+            $.ajax({
+                type: "PATCH",
+                url: "/api/users",
+                data: "primary_calendar_id=" + calendarDom.data("id"),
+                success: function(data) {
+                    fetchCalendars();
+                    alert(data.message);
+                }
+            });
+        }
     </script>
 {% endblock %}

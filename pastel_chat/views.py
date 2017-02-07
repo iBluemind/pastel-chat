@@ -90,6 +90,37 @@ def settings():
     return render_template('settings.html')
 
 
+@app.route('/api/calendars', methods=['GET'])
+@login_required
+def fetch_calendars():
+    calendars = Calendar.query.filter(Calendar.user_uid==current_user.uid).all()
+    primary_calendar_id = current_user.primary_calendar_id
+    fetched_calendars = []
+    for calendar in calendars:
+        is_primary = True if calendar.id == primary_calendar_id else False
+        fetched_calendars.append({
+            'id': calendar.id,
+            'name': calendar.name,
+            'is_primary': is_primary
+        })
+    return response_template('정상처리되었습니다.', data={
+        'calendars': fetched_calendars
+    })
+
+
+@app.route('/api/users', methods=['PATCH'])
+@login_required
+def modify_user():
+    if request.form.get('primary_calendar_id'):
+        calendar_id = request.form['primary_calendar_id']
+        user = User.query.filter(User.uid==current_user.uid).first()
+        user.primary_calendar_id = calendar_id
+        db.session.commit()
+        calendar_name = Calendar.query.get(calendar_id).name
+        return response_template('기본 캘린더가 %s로 변경되었습니다.' % calendar_name)
+    return response_template('정상처리되었습니다.')
+
+
 @app.route('/api/sync/calendar_list', methods=['POST'])
 @login_required
 def calendars_sync():

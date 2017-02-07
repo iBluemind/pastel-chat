@@ -3,7 +3,7 @@
 import datetime
 from sqlalchemy import func
 from pastel_chat import db
-from pastel_chat.utils import random_generate_token
+from pastel_chat.utils import random_generate_token, JSONSerializable
 
 user_hashtag = db.Table(
                         'user_hashtag',
@@ -295,7 +295,7 @@ class Schedule(db.Model):
         self.created_at = datetime.datetime.now()
 
 
-class Calendar(db.Model):
+class Calendar(db.Model, JSONSerializable):
 
     __tablename__ = 'calendar'
 
