@@ -208,7 +208,7 @@ class NewScheduleQuestionResponseMaker(NewScheduleResponseMaker):
     __command_type__ = CommandType.ADD_NEW_SCHEDULE
 
     def make_response(self):
-        return self._answer()
+        return self._question()
 
     def _question(self):
         self.create_nlp_helper(self.user_request.message)
@@ -229,7 +229,7 @@ class NewScheduleQuestionResponseMaker(NewScheduleResponseMaker):
 
 class NewScheduleAnswerResponseMaker(NewScheduleResponseMaker):
     def make_response(self):
-        return self._question()
+        return self._answer()
 
     def _answer(self):
         if PositiveOrNegativeDetector.detect(self.user_request.message):

@@ -97,13 +97,14 @@ def receive_user_message():
     conversation_redis = get_redis(RedisType.CONVERSATIONS)
     def log_conversations(request_user, user_request, response):
         pipe = conversation_redis.pipeline()
+        command_type = getattr(user_request, 'command_type', None)
         # 요청 기록
-        log_conversation(pipe, request_user.uid, user_request.command_type,
+        log_conversation(pipe, request_user.uid, command_type,
                          user_request.message,
                          MessageType.REQUEST,
                          serialize_message_additional(user_request.request_type, request=user_request))
         # 응답 기록
-        log_conversation(pipe, request_user.uid, user_request.command_type,
+        log_conversation(pipe, request_user.uid, command_type,
                          response.content,
                          MessageType.RESPONSE,
                          serialize_message_additional(response.content_type, response=response))
@@ -112,11 +113,7 @@ def receive_user_message():
     def question_again():
         last_message_in_conversation = \
             get_last_message_in_conversation(conversation_redis, request_user.uid)
-        return jsonify({
-            "message": {
-                "text": last_message_in_conversation['content']
-            }
-        })
+        return last_message_in_conversation['content']
 
     def log_messages(request_user, user_request, response):
         log_request = Message(
@@ -159,9 +156,12 @@ def receive_user_message():
         })
     except AlreadyBegunConversationError:
         response = question_again()
-        log_conversations(request_user, user_request, response)
-        return response
-    except:
+        return jsonify({
+            "message": {
+                "text": response
+            }
+        })
+    except Exception as e:
         sentry.captureException()
         user_request.is_positive = PositiveOrNegativeDetector.detect(user_request.message)
 
