@@ -7,7 +7,8 @@ def initialize_db():
     from pastel_chat.models import Calendar, CalendarPlatformSync, PlatformSyncBy, \
                 Schedule, ScheduleRecurrence, AttachedFile, Region, HashTag, \
                 user_hashtag, schedule_schedule_recurrence, calendar_schedule, \
-                CalendarListPlatformSync, Message, Conversation, InvitationCode
+                CalendarListPlatformSync, Message, Conversation, InvitationCode, \
+                user_calendar
     db.drop_all()
     db.create_all()
 

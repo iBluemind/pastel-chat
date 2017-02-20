@@ -77,16 +77,19 @@ class PositiveOrNegativeDetector(object):
         current_dir_path = os.path.dirname(os.path.realpath(__file__))
         root_dir_path = '%s/../..' % current_dir_path
 
-        cls.doc_vectorizer = doc2vec.Doc2Vec.load('%s/train_datas/doc2vec.model' % root_dir_path)
-        with open('%s/train_datas/train_x' % root_dir_path, 'rb') as train_x_file:
-            train_x = pickle.load(train_x_file)
-        with open('%s/train_datas/train_y' % root_dir_path, 'rb') as train_y_file:
-            train_y = pickle.load(train_y_file)
+        try:
+            cls.doc_vectorizer = doc2vec.Doc2Vec.load('%s/train_datas/doc2vec.model' % root_dir_path)
+            with open('%s/train_datas/train_x' % root_dir_path, 'rb') as train_x_file:
+                train_x = pickle.load(train_x_file)
+            with open('%s/train_datas/train_y' % root_dir_path, 'rb') as train_y_file:
+                train_y = pickle.load(train_y_file)
 
-        cls.classifier = LogisticRegression()
-        cls.classifier.fit(train_x, train_y)
-        elapsed_time = time.time() - start_time
-        logger.info('Completed! The elapsed time is %ds' % elapsed_time)
+            cls.classifier = LogisticRegression()
+            cls.classifier.fit(train_x, train_y)
+            elapsed_time = time.time() - start_time
+            logger.info('Completed! The elapsed time is %ds' % elapsed_time)
+        except FileNotFoundError as e:
+            logger.info("Can't find the train datas! Please download first!")
 
     @staticmethod
     def _tokenize(twitter_tagger, message):

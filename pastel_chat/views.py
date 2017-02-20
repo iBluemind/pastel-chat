@@ -94,7 +94,7 @@ def settings():
 @app.route('/api/calendars', methods=['GET'])
 @login_required
 def fetch_calendars():
-    calendars = Calendar.query.filter(Calendar.user_uid==current_user.uid).all()
+    calendars = current_user.calendars
     primary_calendar_id = current_user.primary_calendar_id
     fetched_calendars = []
     for calendar in calendars:
@@ -216,7 +216,7 @@ def primary_calendar_sync():
 
     credentials = list(filter(lambda x: x.platform_id == GoogleOAuth2Provider.__platform_id__,
                               current_user.platform_sessions))[0].tokens
-    sync_google_calendar.apply_async((credentials, current_user))
+    sync_google_calendar.apply_async((credentials, current_user.uid))
     return response_template('정상처리되었습니다.')
 
 

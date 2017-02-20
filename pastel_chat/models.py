@@ -282,7 +282,6 @@ class Schedule(db.Model):
     attached_files = db.relationship('AttachedFile', backref='schedule', lazy='dynamic')
     schedule_recurrences = db.relationship('ScheduleRecurrence', secondary=schedule_schedule_recurrence,
                                   backref=db.backref('schedules', lazy='dynamic'))
-    calendars = db.relationship('Calendar', secondary=calendar_schedule, backref='schedules')
 
     def __init__(self, platform_uuid, title=None, description=None, location=None, is_all_day=None, scheduled_at=None,
                  started_at=None, ended_at=None, url=None, online_meeting_url=None, organizer=None, attendees=None,

@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 from pastel_chat import db, login_manager
 from pastel_chat.models import Calendar
-from pastel_chat.utils import random_generate_token
+from pastel_chat.utils import random_generate_token, JSONSerializable
 
 
 class Platform(db.Model):
@@ -74,7 +74,7 @@ class UserSignupStep(object):
     AFTER_ADD_FIRST_SCHEDULE = 4
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, JSONSerializable):
 
     __tablename__ = 'user'
 

@@ -12,7 +12,22 @@ from pastel_chat.models import PlatformSyncBy, CalendarPlatformSync, db, Calenda
     DateTimeWithTimeZone, Person, Schedule
 from pastel_chat.oauth.models import User
 
-tasks = Celery(broker=RedisConnector.REDIS_TYPES[RedisType.BROCKER].uri)
+
+def make_celery():
+    from pastel_chat import app
+    celery = Celery(broker=RedisConnector.REDIS_TYPES[RedisType.BROCKER].uri)
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+
+tasks = make_celery()
 
 
 @tasks.task

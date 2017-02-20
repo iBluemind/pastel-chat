@@ -63,7 +63,6 @@ COPY requirements.txt ${PASTEL_CHAT_APP_PATH}/
 RUN pip install -r requirements.txt
 RUN pip install uwsgi -I
 
-VOLUME ${PASTEL_CHAT_APP_PATH}
 COPY ./ ${PASTEL_CHAT_APP_PATH}/
 
 RUN apt-get autoremove -y && apt-get clean
