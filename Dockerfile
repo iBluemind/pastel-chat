@@ -17,6 +17,10 @@ RUN apt-get update \
 
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
 
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install -g bower
+
 # for Mecab, ...
 RUN apt-get -y install language-pack-ko-base software-properties-common python-software-properties
 RUN add-apt-repository ppa:webupd8team/java
@@ -54,13 +58,14 @@ RUN python3 setup.py install
 
 RUN mkdir -p ${PASTEL_CHAT_APP_PATH}
 WORKDIR ${PASTEL_CHAT_APP_PATH}
-ADD requirements.txt ${PASTEL_CHAT_APP_PATH}/
-
-VOLUME ${PASTEL_CHAT_APP_PATH}
+COPY requirements.txt ${PASTEL_CHAT_APP_PATH}/
 
 RUN pip install -r requirements.txt
 RUN pip install uwsgi -I
 
+VOLUME ${PASTEL_CHAT_APP_PATH}
+COPY ./ ${PASTEL_CHAT_APP_PATH}/
+
 RUN apt-get autoremove -y && apt-get clean
 
-ENTRYPOINT bash
+ENTRYPOINT /var/www/pastel_chat/scripts/start.sh

@@ -1,4 +1,3 @@
 train_datas/
 .git/
 *.sock
-pastel_chat/static/libs/**

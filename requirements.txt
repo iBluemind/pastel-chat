@@ -8,7 +8,7 @@ Flask-S3==0.3.1
 Flask-Script==2.0.5
 Flask-WTF==0.12
 Flask-Migrate==2.0.3
-celery==3.1.23
+celery==4.0.2
 Fabric==1.10.2
 webassets==0.11.1
 cssmin==0.2.0

@@ -65,7 +65,7 @@ class PositiveOrNegativeDetector(object):
     }
 
     pre_defined_positives = ('응', 'ㅇㅇ', 'ㅇㅋ', '그래', '오냐', '알았어', '확인', '오키',
-                             '오케이', '굿', '좋아', '네')
+                             '오케이', '굿', '좋아', '네', '구랭', '그랭')
     pre_defined_negatives = ('아니', 'ㄴㄴ', '싫어', '안좋아', '나빠', '노노')
 
     @classmethod

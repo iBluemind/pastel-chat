@@ -6,13 +6,15 @@ class RedisType(object):
     AUTH_SESSION = 0
     FORMATTED_TEXT = 1
     CONVERSATIONS = 2
+    BROCKER = 3
 
 
 class RedisConnector(object):
     REDIS_TYPES = {
         RedisType.AUTH_SESSION: AccessRedis(db=0),
         RedisType.FORMATTED_TEXT: AccessRedis(db=1),
-        RedisType.CONVERSATIONS: AccessRedis(db=2)
+        RedisType.CONVERSATIONS: AccessRedis(db=2),
+        RedisType.BROCKER: AccessRedis(db=3)
     }
 
     def __init__(self, redis_type):

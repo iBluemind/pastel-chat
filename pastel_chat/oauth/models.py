@@ -95,8 +95,6 @@ class User(db.Model, UserMixin):
     region_id = db.Column(db.Integer, db.ForeignKey('region.id'), nullable=True)
     region = relationship('Region', backref=backref('user', uselist=False))
     timezone = db.Column(db.String(50), nullable=True)      # TZ db의 TZ값
-    calendars = db.relationship('Calendar', backref='user', lazy='dynamic', primaryjoin=
-                                            uid==Calendar.user_uid)
     primary_calendar_id = db.Column(db.Integer, db.ForeignKey('calendar.id'), nullable=True)
     primary_calendar = relationship('Calendar', backref=backref('primary_user', uselist=False),
                                             primaryjoin=primary_calendar_id==Calendar.id)

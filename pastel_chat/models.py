@@ -27,6 +27,13 @@ calendar_schedule = db.Table(
                                             db.ForeignKey('schedule.id'))
                     )
 
+user_calendar = db.Table(
+                        'user_calendar',
+                            db.Column('user_uid', db.Integer, db.ForeignKey('user.uid')),
+                            db.Column('calendar_id', db.Integer,
+                                            db.ForeignKey('calendar.id'))
+                    )
+
 
 class InvitationCode(db.Model):
 
@@ -135,13 +142,16 @@ class CalendarPlatformSync(db.Model):
                                db.ForeignKey('calendar.id'), nullable=True)
     platform_id = db.Column(db.Integer,
                                   db.ForeignKey('platform.id'), nullable=False)
+    user_uid = db.Column(db.Integer,
+                         db.ForeignKey('user.uid'), nullable=False)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime, onupdate=func.current_timestamp())
 
-    def __init__(self, tokens, calendar_id, platform_id):
+    def __init__(self, tokens, calendar_id, platform_id, user_uid):
         self.tokens = tokens
         self.calendar_id = calendar_id
         self.platform_id = platform_id
+        self.user_uid = user_uid
         self.created_at = datetime.datetime.now()
 
 
@@ -272,6 +282,7 @@ class Schedule(db.Model):
     attached_files = db.relationship('AttachedFile', backref='schedule', lazy='dynamic')
     schedule_recurrences = db.relationship('ScheduleRecurrence', secondary=schedule_schedule_recurrence,
                                   backref=db.backref('schedules', lazy='dynamic'))
+    calendars = db.relationship('Calendar', secondary=calendar_schedule, backref='schedules')
 
     def __init__(self, platform_uuid, title=None, description=None, location=None, is_all_day=None, scheduled_at=None,
                  started_at=None, ended_at=None, url=None, online_meeting_url=None, organizer=None, attendees=None,
@@ -303,18 +314,16 @@ class Calendar(db.Model, JSONSerializable):
     platform_uuid = db.Column(db.String(256), unique=True, nullable=False)
     name = db.Column(db.String(50), nullable=True)
     platform_id = db.Column(db.Integer, db.ForeignKey('platform.id'), nullable=False)
-    user_uid = db.Column(db.Integer,
-                                    db.ForeignKey('user.uid'), nullable=True)
     timezone = db.Column(db.Text, nullable=True)
     schedules = db.relationship('Schedule', secondary=calendar_schedule,
                                                  backref=db.backref('calendars', lazy='dynamic'))
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime, onupdate=func.current_timestamp())
+    users = db.relationship('User', secondary=user_calendar, backref='calendars')
 
-    def __init__(self, platform_uuid, platform_id, name=None, user_uid=None, timezone=None):
+    def __init__(self, platform_uuid, platform_id, name=None, timezone=None):
         self.platform_uuid = platform_uuid
         self.name = name
         self.platform_id = platform_id
-        self.user_uid = user_uid
         self.timezone = timezone
         self.created_at = datetime.datetime.now()

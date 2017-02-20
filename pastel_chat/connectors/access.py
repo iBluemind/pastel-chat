@@ -85,6 +85,12 @@ class AccessRedis(object):
             db = REDIS_DEFAULT_DB_NUMBER
         return db
 
+    @property
+    def uri(self):
+        return 'redis://:%s@%s:%s/%s' % (
+            self.password, self.host, self.port, self.db
+        )
+
 
 class AccessElasticSearch(object):
     def __init__(self, host=None, port=None):
