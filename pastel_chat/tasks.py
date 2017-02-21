@@ -102,8 +102,8 @@ def sync_google_calendar(credentials, current_user_uid):
             sensitivity = 0
             if event.get('visibility'):
                 sensitivities = {
-                    'normal': 0,
-                    'personal': 1,
+                    'default': 0,
+                    'public': 1,
                     'private': 2,
                     'confidential': 3,
                 }
