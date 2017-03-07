@@ -68,3 +68,4 @@ COPY ./ ${PASTEL_CHAT_APP_PATH}/
 RUN apt-get autoremove -y && apt-get clean
 
 ENTRYPOINT /var/www/pastel_chat/scripts/start.sh
+EXPOSE 80
