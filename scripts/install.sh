@@ -1,6 +1,4 @@
-#!/bin/bash
-
-ROOT_PATH=`pwd`
+#!/bin/sh
 
 function build_forge_min_js {
     local forge_min_js="$ROOT_PATH/pastel_chat/static/libs/forge/js/forge.min.js"
@@ -14,7 +12,6 @@ function build_forge_min_js {
     fi
 }
 
-bower install --allow-root
+bower install
 build_forge_min_js
-
-docker build -t pastel/pastel-chat $ROOT_PATH
+pip install -r requirements.txt
