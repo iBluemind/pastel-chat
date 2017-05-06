@@ -179,7 +179,6 @@ def receive_user_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=response.content))
-    return response_template('정상처리되었습니다.')
 
 
 @handler.add(FollowEvent)
@@ -196,12 +195,9 @@ def registered_as_friend(event):
         event.reply_token,
         TextSendMessage(text=event.message.text))
 
-    return response_template('정상처리되었습니다.')
-
 
 @handler.add(UnfollowEvent)
 def removed_from_friend(event):
     joined_user = User.query.filter(User.messenger_uid == event.source.user_id).first()
     joined_user.status = UserStatus.DEACTIVATED
     db.session.commit()
-    return response_template('정상처리되었습니다.')
