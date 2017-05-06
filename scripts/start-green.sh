@@ -23,4 +23,8 @@ get_train_datas
 cd $ROOT_DIR
 pip install -r requirements.txt
 chown -R www-data:www-data $ROOT_DIR
+
+echo "Sleep for memory releasing..."
+sleep 30
+
 uwsgi --ini /var/www/pastel_chat/uwsgi_config_green.ini

@@ -153,5 +153,5 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized_login():
-    return render_template('error.html', title='카카오톡에서 사용해주세요!',
-                           description='카카오톡 옐로아이디 친구 추가 후 접속해주세요.')
+    return render_template('error.html', title='라인 또는 카카오톡에서 사용해주세요!',
+                           description='라인 또는 카카오톡 옐로아이디 친구 추가 후 접속해주세요.')

@@ -20,7 +20,7 @@ from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH, PLEASE_INPU
 from pastel_chat.core.response import ConversationMode, ResponseGenerator, RandomResponseMaker
 from pastel_chat.core.utils import serialize_message_additional, PositiveOrNegativeDetector
 from pastel_chat.models import MessageType, Message, InvitationCode
-from pastel_chat.oauth.models import User, UserStatus, UserSignupStep
+from pastel_chat.oauth.models import User, UserStatus, UserSignupStep, Messenger
 from pastel_chat.line import line
 from pastel_chat.utils import get_or_create
 
@@ -204,7 +204,7 @@ def registered_as_friend(event):
     if joined_user:
         joined_user.status = UserStatus.NORMAL
     else:
-        new_user = User(messenger_uid=event.source.user_id)  # 새로운 회원 가입
+        new_user = User(messenger_uid=event.source.user_id, messenger=Messenger.LINE)  # 새로운 회원 가입
         db.session.add(new_user)
     db.session.commit()
 
