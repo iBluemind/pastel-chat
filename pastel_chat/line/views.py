@@ -65,23 +65,31 @@ def receive_user_message(event):
             if input_code:
                 request_user.invitation_code_id = input_code.id
                 db.session.commit()
+
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=PLEASE_ADD_OAUTH % (request_user.uuid)))
+                return
+
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=PLEASE_INPUT_INVITATION_CODE))
+            return
+
         if len(request_user.platform_sessions) == 0:
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=NOT_YET_ADD_OAUTH))
+            return
 
         if request_user.signup_step_status == UserSignupStep.COMPLETE_ADD_FIRST_OAUTH:
             request_user.signup_step_status = UserSignupStep.BEFORE_READ_INTRODUCE
             db.session.commit()
+
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=COMPLETE_ADD_OAUTH))
+            return
 
         if request_user.signup_step_status == UserSignupStep.BEFORE_READ_INTRODUCE:
             request_user.signup_step_status = UserSignupStep.AFTER_READ_INTRODUCE
@@ -91,14 +99,18 @@ def receive_user_message(event):
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=INTRODUCE_LINDER))
+                return
+
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=COMPLETE_SIGNUP))
+            return
 
     if request_message == HELP_LINDER:
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=README % request_user.uuid))
+        return
 
     conversation_redis = get_redis(RedisType.CONVERSATIONS)
 
@@ -159,11 +171,14 @@ def receive_user_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=response.content))
+        return
+
     except AlreadyBegunConversationError:
         response = question_again()
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=response))
+        return
     except Exception as e:
         sentry.captureException()
         user_request.is_positive = PositiveOrNegativeDetector.detect(user_request.message)
@@ -179,11 +194,13 @@ def receive_user_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=response.content))
+        return
 
 
 @handler.add(FollowEvent)
 def registered_as_friend(event):
     joined_user = User.query.filter(User.messenger_uid == event.source.user_id).first()
+    new_user = None
     if joined_user:
         joined_user.status = UserStatus.NORMAL
     else:
@@ -191,9 +208,10 @@ def registered_as_friend(event):
         db.session.add(new_user)
     db.session.commit()
 
+    user = new_user or joined_user
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        TextSendMessage(text=PLEASE_ADD_OAUTH % (user.uuid)))
 
 
 @handler.add(UnfollowEvent)
