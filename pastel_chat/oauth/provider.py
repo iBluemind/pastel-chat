@@ -222,6 +222,11 @@ class PlatformOAuth2Manager(object):
         if self.is_logged_in():
             user = self.provider.current_user
             new_userinfo, user_platform_session = self.provider.get_me()
+
+            old_user = User.query.filter(User.email == new_userinfo['email']).first()
+            if old_user:
+                old_user.email = None
+
             for k, v in new_userinfo.items():
                 if v is not None:
                     setattr(user, k, v)

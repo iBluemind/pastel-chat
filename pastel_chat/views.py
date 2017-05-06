@@ -14,7 +14,7 @@ from pastel_chat.forms import LoginForm
 from pastel_chat.login import PastelLoginHelper
 from pastel_chat.models import CalendarPlatformSync, Schedule, DateTimeWithTimeZone, Person, \
     CalendarPlatformSyncHistory, PlatformSyncBy, CalendarListPlatformSync, Calendar
-from pastel_chat.oauth.models import User
+from pastel_chat.oauth.models import User, Messenger
 from pastel_chat.oauth.provider import GoogleOAuth2Provider
 from pastel_chat.tasks import sync_google_calendar
 from pastel_chat.utils import get_or_create, KAKAOTALK_USER_AGENT
@@ -88,7 +88,10 @@ def settings():
     user_platform_sessions = current_user.platform_sessions
     if len(user_platform_sessions) == 0:
         return redirect(url_for('login'))
-    return render_template('settings.html')
+    messenger_name = '카카오톡'
+    if current_user.messenger == Messenger.LINE:
+        messenger_name = '라인'
+    return render_template('settings.html', messenger_name=messenger_name)
 
 
 @app.route('/api/calendars', methods=['GET'])
