@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from googleapiclient.discovery import build
 from oauth2client.client import OAuth2Credentials
 from pastel_chat.oauth.provider import GoogleOAuth2Provider
-from pastel_chat.utils import get_or_create
+from pastel_chat.utils import get_or_create, chunks
 from pastel_chat.connectors.redis import RedisType, RedisConnector
 from pastel_chat.models import PlatformSyncBy, CalendarPlatformSync, db, CalendarPlatformSyncHistory, \
     DateTimeWithTimeZone, Person, Schedule
@@ -28,6 +28,53 @@ def make_celery():
 
 
 tasks = make_celery()
+
+
+@tasks.task
+def insert_events_google_calendar(credentials, current_user_uid, schedules):
+    current_user = User.query.get(current_user_uid)
+
+    credentials = OAuth2Credentials.from_json(credentials)
+    http = credentials.authorize(httplib2.Http())
+    service = build('calendar', 'v3', http=http)
+
+    def insert(events):
+        user_primary_calendar = current_user.primary_calendar
+        for chunked_events in list(chunks(events, 5)):
+            batch = service.new_batch_http_request()
+            for event in chunked_events:
+                batch.add(service.events().insert(calendarId=user_primary_calendar.platform_uuid,
+                                                  body=event))
+            batch.execute(http=http)
+
+    def datetime_format(extracted):
+        korean_utctime = '+09:00'
+        formatted = extracted.strftime('%Y-%m-%dT%H:%M:%S')
+        return {
+            'dateTime': '%s%s' % (formatted, korean_utctime),
+            'timeZone': 'Asia/Seoul',
+        }
+
+    def date_format(extracted):
+        formatted = extracted.strftime('%Y-%m-%d')
+        return {
+            'date': '%s' % formatted,
+            'timeZone': 'Asia/Seoul',
+        }
+
+    def convert_datetime_format(extracted):
+        if extracted.strftime('%H:%M:%S') == '12:00:00':
+            return date_format(extracted)
+        return datetime_format(extracted)
+
+    insert(list(map(lambda x: {
+        'id': x.id,
+        'summary': x.title,
+        'location': x.location,
+        'description': x.description,
+        'start': convert_datetime_format(x.started_at),
+        'end': convert_datetime_format(x.ended_at)
+    }, schedules)))
 
 
 @tasks.task

@@ -34,6 +34,13 @@ user_calendar = db.Table(
                                             db.ForeignKey('calendar.id'))
                     )
 
+hashtag_calendar = db.Table(
+                        'hashtag_calendar',
+                            db.Column('hashtag_id', db.Integer, db.ForeignKey('hashtag.id')),
+                            db.Column('calendar_id', db.Integer,
+                                            db.ForeignKey('calendar.id'))
+                    )
+
 
 class InvitationCode(db.Model):
 

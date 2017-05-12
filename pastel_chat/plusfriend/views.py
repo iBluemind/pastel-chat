@@ -3,7 +3,7 @@
 from flask import request
 from flask.json import jsonify
 from pastel_chat import db, response_template
-from pastel_chat.core.dialog import _receive_user_message
+from pastel_chat.core.dialog import generate_response
 from pastel_chat.core.messages import BAD_REQUEST
 from pastel_chat.oauth.models import User, UserStatus
 from pastel_chat.plusfriend import plusfriend
@@ -33,7 +33,7 @@ def receive_user_message():
         messenger_uid=messenger_uid
     )
 
-    response_message = _receive_user_message(request_user, request_message)
+    response_message = generate_response(request_user, request_message)
     return make_response(response_message)
 
 

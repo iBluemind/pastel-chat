@@ -122,7 +122,7 @@ def _process_dialog(request_user, request_message):
         return response.content
 
 
-def _receive_user_message(request_user, request_message):
+def generate_response(request_user, request_message):
     if _is_user_in_signup_steps(request_user):
         return _process_user_signup_steps(request_user, request_message)
     if request_message == HELP_LINDER:

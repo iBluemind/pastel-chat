@@ -9,7 +9,7 @@ from linebot.models import TextMessage
 from linebot.models import TextSendMessage
 from linebot.models import UnfollowEvent
 from pastel_chat import db, response_template, handler, line_bot_api
-from pastel_chat.core.dialog import _receive_user_message
+from pastel_chat.core.dialog import generate_response
 from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH
 from pastel_chat.oauth.models import User, UserStatus, Messenger
 from pastel_chat.line import line
@@ -46,7 +46,7 @@ def receive_user_message(event):
         messenger_uid=messenger_uid
     )
 
-    response_message = _receive_user_message(request_user, request_message)
+    response_message = generate_response(request_user, request_message)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=response_message))

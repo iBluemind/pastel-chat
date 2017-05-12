@@ -8,8 +8,8 @@ def initialize_db():
                 Schedule, ScheduleRecurrence, AttachedFile, Region, HashTag, \
                 user_hashtag, schedule_schedule_recurrence, calendar_schedule, \
                 CalendarListPlatformSync, Message, Conversation, InvitationCode, \
-                user_calendar
-    db.drop_all()
+                user_calendar, hashtag_calendar
+    # db.drop_all()
     db.create_all()
 
     platform_google = Platform(
