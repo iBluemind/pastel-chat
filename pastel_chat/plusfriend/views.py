@@ -2,19 +2,10 @@
 
 from flask import request
 from flask.json import jsonify
-from pastel_chat.connectors.redis import RedisType
-from pastel_chat import db, response_template, sentry, get_redis
-from pastel_chat.core.analyzer import UserRequestAnalyzer
-from pastel_chat.core.conversation import log_conversation, \
-    end_conversation, get_last_message_in_conversation
+from pastel_chat import db, response_template
 from pastel_chat.core.dialog import _receive_user_message
-from pastel_chat.core.exceptions import AlreadyBegunConversationError
-from pastel_chat.core.messages import BAD_REQUEST, PLEASE_ADD_OAUTH, PLEASE_INPUT_INVITATION_CODE, HELP_LINDER, README, \
-    NOT_YET_ADD_OAUTH, COMPLETE_ADD_OAUTH, INTRODUCE_LINDER, COMPLETE_SIGNUP
-from pastel_chat.core.response import ConversationMode, ResponseGenerator, RandomResponseMaker
-from pastel_chat.core.utils import serialize_message_additional, PositiveOrNegativeDetector
-from pastel_chat.models import MessageType, Message, InvitationCode
-from pastel_chat.oauth.models import User, UserStatus, UserSignupStep
+from pastel_chat.core.messages import BAD_REQUEST
+from pastel_chat.oauth.models import User, UserStatus
 from pastel_chat.plusfriend import plusfriend
 from pastel_chat.utils import get_or_create
 

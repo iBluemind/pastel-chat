@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pastel_chat import PositiveOrNegativeDetector, get_redis, sentry
-from pastel_chat import RedisType
-from pastel_chat import db
+from pastel_chat import get_redis, sentry, db
+from pastel_chat.connectors.redis import RedisType
+from pastel_chat.core.utils import PositiveOrNegativeDetector
 from pastel_chat.core.analyzer import UserRequestAnalyzer
 from pastel_chat.core.conversation import log_conversation, get_last_message_in_conversation, end_conversation
 from pastel_chat.core.exceptions import AlreadyBegunConversationError
@@ -36,13 +36,16 @@ def _process_user_signup_steps(request_user, request_message):
         db.session.commit()
         return COMPLETE_ADD_OAUTH
 
-    if request_user.signup_step_status == UserSignupStep.BEFORE_READ_INTRODUCE:
-        request_user.signup_step_status = UserSignupStep.AFTER_READ_INTRODUCE
-        db.session.commit()
+    before_status = request_user.signup_step_status
+    request_user.signup_step_status = UserSignupStep.AFTER_READ_INTRODUCE
+    db.session.commit()
+
+    if before_status == UserSignupStep.BEFORE_READ_INTRODUCE:
         is_positive = PositiveOrNegativeDetector.detect(request_message)
         if is_positive:
             return INTRODUCE_LINDER
         return COMPLETE_SIGNUP
+    return README
 
 
 def _process_dialog(request_user, request_message):
