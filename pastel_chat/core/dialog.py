@@ -46,7 +46,7 @@ def _process_user_signup_steps(request_user, request_message):
 
 
 def _process_dialog(request_user, request_message):
-    conversation_redis = get_redis(RedisType.LUIS_CONVERSATIONS)
+    conversation_redis = get_redis(RedisType.CONVERSATIONS)
 
     def log_conversations(request_user, user_request, response):
         pipe = conversation_redis.pipeline()

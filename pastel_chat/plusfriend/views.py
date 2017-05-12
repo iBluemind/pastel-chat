@@ -26,12 +26,15 @@ def receive_user_message():
     request_message_type = body['type']
     request_message = body['content']
 
-    if request_message_type != 'text':
+    def make_response(message):
         return jsonify({
             "message": {
-                "text": BAD_REQUEST
+                "text": message
             }
         })
+
+    if request_message_type != 'text':
+        return make_response(BAD_REQUEST)
 
     request_user = get_or_create(
         db.session,
@@ -40,11 +43,7 @@ def receive_user_message():
     )
 
     response_message = _receive_user_message(request_user, request_message)
-    return jsonify({
-        'message': {
-            'text': response_message
-        }
-    })
+    return make_response(response_message)
 
 
 @plusfriend.route('/friend', methods=['POST'])
