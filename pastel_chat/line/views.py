@@ -61,9 +61,10 @@ def registered_as_friend(event):
     else:
         new_user = User(messenger_uid=event.source.user_id, messenger=Messenger.LINE)  # 새로운 회원 가입
         db.session.add(new_user)
+    user = new_user or joined_user
+    user.invitation_code_id = 1
     db.session.commit()
 
-    user = new_user or joined_user
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=PLEASE_ADD_OAUTH % (user.uuid)))

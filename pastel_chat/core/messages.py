@@ -12,7 +12,7 @@ BAD_REQUEST = '린더는 일정 관련 일만을 처리하는 인공지능 캘�
 PLEASE_INPUT_INVITATION_CODE = '올바른 초대코드를 입력해주세요.'
 WELCOME_FIRST_ADD_SCHEDULE = "[첫 일정 등록완료]\n린더를 통한 첫 일정 등록이 완료되었습니다.\n\n#린더에 대해 궁금한 사항은 FAQ 페이지를 살펴보시거나 저희 린더 트레이너(contact@hiddentrack.co)들에게 언제든지 연락주세요.\n\n#혹은 대화창에 '도움말'을 입력하시면 안내받으실 수 있습니다.\n\n그럼 앞으로 일정에 관련된 모든 일은 린더에게 맡겨만주세요!"
 README = '[린더 도움말]\n린더는 챗봇 기반의 대화형 일정관리 서비스로 고객님의 일정관리를 위해 최선의 노력을 다하고 있습니다.\n\n#캘린더 동기화 링크\nhttps://chat.linder.kr/users/%s\n\n#린더 일정 추가 예시\n린더 내일 오후 3시 강남에서 희연이랑 점심 등록해줘\n\n#FAQ 바로가기\nhttps://chat.linder.kr/faq\n\n#린더는 현재 베타 버전으로 이용하시는데 다소 제한이 있을 수 있습니다. 이점 양해 부탁드립니다.'
-INTRODUCE_LINDER = '[린더 소개]\n네, 우선 베타 버전인 린더는 현재 일정 드록 기능만을 갖추고 있습니다.\n\n#일정을 등록하고 싶으시다면 린더에게 언제, 어디서, 무엇을 할지 말해보세요.\n\nex) 린더야 내일 오후 3시 강남에서 희연이랑 점심 등록해줘\n\n#린더 대화체 안내\n(등록해, 추가해 저장해)\n\n그럼 지금 한번 해볼까요?'
+INTRODUCE_LINDER = '[린더 소개]\n네, 우선 베타 버전인 린더는 현재 일정 등록 기능만을 갖추고 있습니다.\n\n#일정을 등록하고 싶으시다면 린더에게 언제, 어디서, 무엇을 할지 말해보세요.\n\nex) 린더야 1월 20일 오후 3시 강남에서 희연이랑 점심 등록해줘\n\n#린더 대화체 안내\n(등록해, 추가해, 저장해)\n\n그럼 지금 한번 해볼까요?'
 COMPLETE_SIGNUP = '린더에 대해 궁금한 사항이 있으실 경우 FAQ 페이지를 살펴보시거나 린더 트레이너(contact@hiddentrack.co)들에게 언제든지 연락주세요.\n\n그럼 앞으로 일정에 관련된 모든 일은 린더에게 맡겨주세요!\n\n#린더 대화체 안내(등록해, 추가해, 저장해)'
 CHECK_NEW_SCHEDULE = '네, %s님,\n\n내용: %s\n일시: %s\n장소: %s\n\n을(를) 캘린더에 추가할까요?'
 CONFIRM_ADD_SCHEDULE = '네, 캘린더에 추가하겠습니다.'
@@ -22,8 +22,8 @@ CHECK_ADD_CALENDAR = '네, %s님.\n\n%s 캘린더에 포함된 %s개의 일정�
 NO_CALENDAR_FOUND = '%s님, 안타깝지만 말씀해주신 캘린더는 아직 추가하실 수 없습니다. 앞으로 더 많은 일정을 추가하실 수 있도록 노력하겠습니다.'
 CONFIRM_ADD_CALENDAR = '네, 해당 일정들을 저장하겠습니다.'
 CANCEL_ADD_CALENDAR = '알겠습니다. 일정들을 저장하지 않겠습니다.'
-NO_RECOMMENDED_SCHEDULE = '%s님, 아쉽지만 말씀해주신 일정에 대해서 추천드릴 내역이 아직 없습니다.'
-RECOMMENDED_SCHEDULES = '네, %s님.\n\n%s\n%s\n\n추천 내역은 아래와 같습니다.\n\n%s'
+NO_RECOMMENDED_SCHEDULE = '%s님, 아쉽지만 말씀해주신 것과 관련된 추천드릴 일정이 아직 없습니다.'
+RECOMMENDED_SCHEDULES = '네, %s님.\n\n%s\n추천 내역은 아래와 같습니다.\n\n%s'
 
 
 class FormattedText(object):

@@ -326,6 +326,8 @@ class Calendar(db.Model, JSONSerializable):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime, onupdate=func.current_timestamp())
     users = db.relationship('User', secondary=user_calendar, backref='calendars')
+    tags = db.relationship('HashTag', secondary=hashtag_calendar,
+                                backref=db.backref('calendars', lazy='dynamic'))
 
     def __init__(self, platform_uuid, platform_id, name=None, timezone=None):
         self.platform_uuid = platform_uuid

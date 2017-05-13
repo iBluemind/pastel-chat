@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  celery:
+    image: registry.hiddentrack.co/pastel-chat
+    entrypoint:
+      - /var/www/pastel_chat/scripts/start_celery.sh
+  app:
+    depends_on:
+      - celery
+    image: registry.hiddentrack.co/pastel-chat
+    environment:
+      - LETSENCRYPT_EMAIL=
+      - LETSENCRYPT_HOST=
+      - VIRTUAL_HOST=
+      - VIRTUAL_PROTO=uwsgi
+      - VIRTUAL_PORT=8802
+    networks:
+      - nginx-proxy
+    entrypoint:
+      - /var/www/pastel_chat/scripts/start-green.sh
+    expose:
+      - "8802"
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy
